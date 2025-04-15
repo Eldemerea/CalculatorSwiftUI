@@ -39,11 +39,16 @@ enum CalculatorButton: String {
             return Color(UIColor(red: 55/255.0, green: 55/255.0, blue: 55/255.0, alpha: 1))
         }
     }
-
-
 }
+
+enum Operation {
+    case add, subtract, multiply, divide, none
+}
+
 struct ContentView: View {
     @State var value = "0"
+    @State var runningNumber = 0
+    @State var currentOperation: Operation = .none
     
     let buttons: [[CalculatorButton]] = [
         [.clear, .negative, .percent, .divide],
@@ -90,7 +95,34 @@ struct ContentView: View {
     func didTap(button: CalculatorButton) {
         switch button {
         case .add, .subtract, .multiply, .divide, .equal:
-            break
+            if button == .add {
+                self.currentOperation = .add
+                self.runningNumber = Int(self.value) ?? 0
+            } else if button == .subtract {
+                self.currentOperation = .subtract
+                self.runningNumber = Int(self.value) ?? 0
+            } else if button == .multiply {
+                self.currentOperation = .multiply
+                self.runningNumber = Int(self.value) ?? 0
+            } else if button == .divide {
+                self.currentOperation = .divide
+                self.runningNumber = Int(self.value) ?? 0
+            } else if button == .equal {
+                let runningValue = self.runningNumber
+                let currentValue = Int(self.value) ?? 0
+                switch self.currentOperation {
+                case .add:
+                    self.value = "\(runningValue + currentValue)"
+                case .subtract:
+                    self.value = "\(runningValue - currentValue)"
+                case .multiply:
+                    self.value = "\(runningValue * currentValue)"
+                case .divide:
+                    self.value = "\(runningValue / currentValue)"
+                case .none:
+                    break
+                }
+            }
         case .clear:
             self.value = "0"
         case .decimal, .negative, .percent:
