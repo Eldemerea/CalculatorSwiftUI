@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 enum CalculatorButton: String {
     case one = "1"
     case two = "2"
@@ -40,7 +39,6 @@ enum CalculatorButton: String {
         }
     }
 }
-
 enum Operation {
     case add, subtract, multiply, divide, none
 }
@@ -82,13 +80,11 @@ struct ContentView: View {
                                     .cornerRadius(self.buttonHeight(item: item)/2)
                             })
                         }
-                        
                     }
                 }
                 .padding(.bottom, 3)
 
             }
-            
         }
     }
     
@@ -123,10 +119,21 @@ struct ContentView: View {
                     break
                 }
             }
+            
+            if button != .equal {
+                self.value = "0"
+                
+            }
         case .clear:
             self.value = "0"
-        case .decimal, .negative, .percent:
+        case .decimal, .percent:
             break
+        case .negative:
+            if let doubleValue = Double(self.value)   {
+                let toggleValue = doubleValue * -1
+                self.value = String(format: "%g", toggleValue)
+            }
+                
         default:
             let number = button.rawValue
             if self.value == "0" {
