@@ -40,12 +40,12 @@ enum CalculatorButton: String {
     }
 }
 enum Operation {
-    case add, subtract, multiply, divide, none
+    case add, subtract, multiply, divide, percent, none
 }
 
 struct ContentView: View {
     @State var value = "0"
-    @State var runningNumber = 0
+    @State var runningNumber: Double = 0
     @State var currentOperation: Operation = .none
     
     let buttons: [[CalculatorButton]] = [
@@ -93,19 +93,19 @@ struct ContentView: View {
         case .add, .subtract, .multiply, .divide, .equal:
             if button == .add {
                 self.currentOperation = .add
-                self.runningNumber = Int(self.value) ?? 0
+                self.runningNumber = Double(self.value) ?? 0
             } else if button == .subtract {
                 self.currentOperation = .subtract
-                self.runningNumber = Int(self.value) ?? 0
+                self.runningNumber = Double(self.value) ?? 0
             } else if button == .multiply {
                 self.currentOperation = .multiply
-                self.runningNumber = Int(self.value) ?? 0
+                self.runningNumber = Double(self.value) ?? 0
             } else if button == .divide {
                 self.currentOperation = .divide
-                self.runningNumber = Int(self.value) ?? 0
+                self.runningNumber = Double(self.value) ?? 0
             } else if button == .equal {
                 let runningValue = self.runningNumber
-                let currentValue = Int(self.value) ?? 0
+                let currentValue = Double(self.value) ?? 0
                 switch self.currentOperation {
                 case .add:
                     self.value = "\(runningValue + currentValue)"
@@ -115,6 +115,9 @@ struct ContentView: View {
                     self.value = "\(runningValue * currentValue)"
                 case .divide:
                     self.value = "\(runningValue / currentValue)"
+                case .percent:
+                    let result = Double(runningValue) * (Double(currentValue) / 100)
+                    self.value = String(format: "%g", result)
                 case .none:
                     break
                 }
@@ -122,18 +125,22 @@ struct ContentView: View {
             
             if button != .equal {
                 self.value = "0"
-                
             }
         case .clear:
             self.value = "0"
-        case .decimal, .percent:
+        case .decimal:
             break
         case .negative:
             if let doubleValue = Double(self.value)   {
                 let toggleValue = doubleValue * -1
                 self.value = String(format: "%g", toggleValue)
             }
-                
+        case .percent:
+            self.currentOperation = .percent
+            self.runningNumber = Double(self.value) ?? 0
+            self.value = "0"
+        
+                    
         default:
             let number = button.rawValue
             if self.value == "0" {
